@@ -13,9 +13,11 @@ typedef enum { false, true } bool;
 
 Treap_T* new_t(void* data);
 
-void add_t(Treap_T* root, Treap_T* node);
+void add_t(Treap_T* root, void* data, int (*compar)(const void *, const void *));
 
-void remove_t(Treap_T* root, void* data);
+void remove_t(Treap_T* root, void* data, int (*compar)(const void *, const void *));
+
+Treap_T* search_t(Treap_T* root, void* data, int (*compar)(const void *, const void *));
 
 void rotate_left(Treap_T* parent);
 
