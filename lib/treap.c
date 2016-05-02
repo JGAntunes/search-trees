@@ -5,7 +5,7 @@
 Treap_T* new_t(void* data) {
   static bool seed_rand = false;
   Treap_T* new_node;
-  // Seed only once
+  /* Seed only once */
   if (!seed_rand) {
     seed_rand = true;
     srand(time(NULL));
@@ -31,7 +31,7 @@ void add_t(Treap_T* root, void* data, int (*compar)(const void *, const void *))
   Treap_T* current_node = root;
   Treap_T* parent_node;
   int diff;
-  // Binary tree insertion
+  /* Binary tree insertion */
   while (current_node) {
     diff = (*compar)(new_node->data, current_node->data);
     Treap_T* temp_node;
@@ -44,13 +44,13 @@ void add_t(Treap_T* root, void* data, int (*compar)(const void *, const void *))
     }
     current_node = temp_node;
   }
-  // Maintain heap priority
-  // Check if not root
+  /* Maintain heap priority */
+  /* Check if not root */
   current_node = new_node;
   parent_node = current_node->parent;
-  // Current node is not root and parent priority is bigger than child
+  /* Current node is not root and parent priority is bigger than child */
   while (parent_node && parent_node->priority > current_node->priority) {
-    // Check if left or right child
+    /* Check if left or right child */
     if (parent_node->left_child) {
       diff = (*compar)(parent_node->left_child->data, current_node->data);
       if (!diff) {
@@ -69,22 +69,22 @@ void add_t(Treap_T* root, void* data, int (*compar)(const void *, const void *))
 Treap_T* search_t(Treap_T* root, void* data, int (*compar)(const void *, const void *)) {
   Treap_T* current_node = root;
   int diff;
-  // Iterate through tree items
+  /* Iterate through tree items */
   while (current_node) {
     diff = (*compar)(data, current_node->data);
     if (!diff) return current_node;
     current_node = diff < 0 ? current_node->left_child : current_node->right_child;
   }
-  // Node not found
+  /* Node not found */
   return NULL;
 }
 
 void remove_t(Treap_T* root, void* data, int (*compar)(const void *, const void *)) {
   Treap_T* node_remove = search_t(root, data, compar);
   Treap_T* current_node = node_remove;
-  // Node not found
+  /* Node not found */
   if (!node_remove) return;
-  // Node is not a leaf
+  /* Node is not a leaf */
   while (current_node->left_child || current_node->right_child) {
     if (!current_node->left_child) rotate_left(current_node->right_child);
     if (!current_node->right_child) rotate_right(current_node->left_child);
@@ -100,7 +100,7 @@ void remove_t(Treap_T* root, void* data, int (*compar)(const void *, const void 
 }
 
 void rotate_left(Treap_T* node) {
-  // If node is root return
+  /* If node is root return */
   if (!node->parent) return;
   Treap_T * parent_node = node->parent;
   Treap_T * left_node = node->left_child;
@@ -108,7 +108,7 @@ void rotate_left(Treap_T* node) {
   node->parent = parent_node->parent;
   parent_node->parent = node;
   parent_node->right_child = left_node;
-  // Need to set parent link but might not exist
+  /* Need to set parent link but might not exist */
   if (left_node) {
     left_node->parent = parent_node;
   }
@@ -116,7 +116,7 @@ void rotate_left(Treap_T* node) {
 }
 
 void rotate_right(Treap_T* node) {
-  // If node is root return
+  /* If node is root return */
   if (!node->parent) return;
   Treap_T * parent_node = node->parent;
   Treap_T * right_node = node->right_child;
@@ -124,7 +124,7 @@ void rotate_right(Treap_T* node) {
   node->parent = parent_node->parent;
   parent_node->parent = node;
   parent_node->left_child = right_node;
-  // Need to set parent link but might not exist
+  /* Need to set parent link but might not exist */
   if (right_node) {
     right_node->parent = parent_node;
   }

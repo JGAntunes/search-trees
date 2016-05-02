@@ -1,7 +1,7 @@
 
-SUBDIRS =  lib
+SUBDIRS =  lib tests
 
-CFLAGS = -g -O0 -Wall -pedantic -std=c99
+CFLAGS = -O3 -ansi -Wall
 
 export DEFS
 export CFLAGS

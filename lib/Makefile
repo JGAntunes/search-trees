@@ -5,7 +5,7 @@ INCLUDES = -I ../include
 DEFS ?= -DHAVE_CONFIG_H #-DDEBUG
 # -DC_DEBUG
 CC = gcc
-CFLAGS ?= -g -O0 -Wall -pedantic -std=c99
+CFLAGS ?= -O3 -ansi -Wall
 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CFLAGS)
 
@@ -14,10 +14,10 @@ ARFLAGS = cru
 RANLIB = ranlib
 
 
-all: libstrees.a
+all: libtrees.a
 
 
-libstrees.a: $(OBJECTS)
+libtrees.a: $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
 	$(RANLIB) $@
 
@@ -25,7 +25,7 @@ libstrees.a: $(OBJECTS)
 	$(COMPILE) -c -o $@ $<
 
 clean:
-	rm -f *.o *~ libstrees.a
+	rm -f *.o *~ libtrees.a
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
