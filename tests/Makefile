@@ -4,7 +4,7 @@ OBJS=${SRCS:.c=}
 INCLUDES =  -I ../include
 CC = gcc
 LIBTREAP =  ../lib/libtrees.a
-CFLAGS = -O3 -ansi -Wall $(INCLUDES)
+CFLAGS = -g -ansi -Wall $(INCLUDES)
 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CFLAGS)
 

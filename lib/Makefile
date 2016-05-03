@@ -5,7 +5,7 @@ INCLUDES = -I ../include
 DEFS ?= -DHAVE_CONFIG_H #-DDEBUG
 # -DC_DEBUG
 CC = gcc
-CFLAGS ?= -O3 -ansi -Wall
+CFLAGS ?= -g -ansi -Wall
 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CFLAGS)
 

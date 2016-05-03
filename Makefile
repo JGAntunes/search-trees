@@ -1,7 +1,7 @@
 
 SUBDIRS =  lib tests
 
-CFLAGS = -O3 -ansi -Wall
+CFLAGS = -g -ansi -Wall
 
 export DEFS
 export CFLAGS
