@@ -10,9 +10,6 @@ int compare_string (const void * data, const void * other_data) {
 void print_tree (Treap_T* node, int level) {
   int i;
   char* position;
-  if (node->left_child) {
-    print_tree(node->left_child, level+1);
-  }
   if (node->right_child) {
     print_tree(node->right_child, level+1);
   }
@@ -27,6 +24,9 @@ void print_tree (Treap_T* node, int level) {
     position = "ROOT";
   }
   printf("<- (%s %s %d)\n", position, (char *) node->data, node->priority);
+  if (node->left_child) {
+    print_tree(node->left_child, level+1);
+  }
 }
 
 int main (int argc, const  char* argv[] ) {
@@ -40,30 +40,34 @@ int main (int argc, const  char* argv[] ) {
   FILE* in_file = fopen(in_file_name, "r"); /* should check the result */
   FILE* out_file = fopen(out_file_name, "w"); /* should check the result */
   char line[LINE_BUFFER];
-  Treap_T* treap = NULL;
+  Treap_T** treap = new_treap();
   fgets(line, sizeof(line), in_file);
   /* num_lines = atoi(line); */
   while (fgets(line, sizeof(line), in_file)) {
     /*handle lines longer that sizeof(line) */
     char op = line[0];
     char* string_to_evaluate = &(line[2]);
+    string_to_evaluate[strlen(string_to_evaluate)-1] = '\0';
     switch (op) {
       case 'A' :
-        if (!treap) {
-          treap = new_t(string_to_evaluate, strlen(string_to_evaluate) + 1);
+        printf("\nOP ADD=%s\n", string_to_evaluate);
+        if (!*treap) {
+          *treap = new_t(string_to_evaluate, strlen(string_to_evaluate) + 1);
         } else {
           add_t(treap, string_to_evaluate, strlen(string_to_evaluate) + 1, compare_string);
         }
         break;
       case 'F' :
+        printf("\nOP FIND=%s\n", string_to_evaluate);
         search_t(treap, string_to_evaluate, compare_string);
         break;
       case 'D' :
+        printf("\nOP DEL=%s\n", string_to_evaluate);
         remove_t(treap, string_to_evaluate, compare_string);
         break;
     }
     printf("\n====TREAP BEGIN====\n");
-    print_tree(treap, 0);
+    print_tree(*treap, 0);
     printf("\n========\n");
   }
 
