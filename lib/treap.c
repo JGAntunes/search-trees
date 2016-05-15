@@ -3,7 +3,7 @@
 #include <string.h>
 #include "treap.h"
 
-Treap_T* new_t(void* data, int data_size) {
+Treap_T* new_t(void* key, void* data, int key_size, int data_size) {
   static bool seed_rand = false;
   Treap_T* new_node;
   /* Seed only once */
@@ -14,6 +14,8 @@ Treap_T* new_t(void* data, int data_size) {
   new_node = (Treap_T *) malloc(sizeof(Treap_T));
   new_node->priority = rand();
   new_node->position = ROOT;
+  new_node->key = malloc(key_size);
+  memcpy(new_node->key, key, key_size);
   new_node->data = malloc(data_size);
   memcpy(new_node->data, data, data_size);
   return new_node;
@@ -30,15 +32,14 @@ void insert (Treap_T* parent, Treap_T* child, side position) {
   child->position = position;
 }
 
-void add_t(Treap_T** root, void* data, int data_size, int (*compar)(const void *, const void *)) {
-  Treap_T* new_node = new_t(data, data_size);
+Treap_T* add_t(Treap_T** root, Treap_T * new_node, int (*compar)(const void *, const void *)) {
   Treap_T* current_node = *root;
   Treap_T* parent_node;
   side position = ROOT;
   int diff;
   /* Binary tree insertion */
   while (current_node) {
-    diff = (*compar)(new_node->data, current_node->data);
+    diff = (*compar)(new_node->key, current_node->key);
     Treap_T* temp_node;
     if (diff < 0) {
       temp_node = current_node->left_child;
@@ -65,15 +66,15 @@ void add_t(Treap_T** root, void* data, int data_size, int (*compar)(const void *
     }
     parent_node = current_node->parent;
   }
-  return;
+  return new_node;
 }
 
-Treap_T* search_t(Treap_T** root, void* data, int (*compar)(const void *, const void *)) {
+Treap_T* search_t(Treap_T** root, void* key, int (*compar)(const void *, const void *)) {
   Treap_T* current_node = *root;
   int diff;
   /* Iterate through tree items */
   while (current_node) {
-    diff = (*compar)(data, current_node->data);
+    diff = (*compar)(key, current_node->key);
     if (!diff) return current_node;
     current_node = diff < 0 ? current_node->left_child : current_node->right_child;
   }
@@ -81,8 +82,15 @@ Treap_T* search_t(Treap_T** root, void* data, int (*compar)(const void *, const 
   return NULL;
 }
 
-void remove_t(Treap_T** root, void* data, int (*compar)(const void *, const void *)) {
-  Treap_T* node_remove = search_t(root, data, compar);
+Treap_T* search_add_t(Treap_T** root, void* key, void* data, int key_size,
+    int data_size, int (*compar)(const void *, const void *)) {
+  Treap_T* node = search_t(root, key, compar);
+  if (node) return node;
+  return add_t(root, new_t(key, data, key_size, data_size), compar);
+}
+
+void remove_t(Treap_T** root, void* key, int (*compar)(const void *, const void *)) {
+  Treap_T* node_remove = search_t(root, key, compar);
   Treap_T* parent_node;
   /* Node not found */
   if (!node_remove) return;
@@ -98,7 +106,7 @@ void remove_t(Treap_T** root, void* data, int (*compar)(const void *, const void
       rotate_right(root, node_remove->left_child);
     }
   }
-  free(node_remove->data);
+  free(node_remove->key);
   parent_node = node_remove->parent;
   if (node_remove->position == LEFT) {
     free(parent_node->left_child);

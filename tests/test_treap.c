@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "treap.h"
 #define LINE_BUFFER 256
 
@@ -30,49 +31,71 @@ void print_tree (Treap_T* node, int level) {
 }
 
 int main (int argc, const  char* argv[] ) {
-  if (argc < 3) {
-    printf("Correct usage ./<test_treap_exe> <in_file> <out_file>\n");
-    return 1;
-  }
-  char const* const in_file_name = argv[1];
-  char const* const out_file_name = argv[2];
-  /* int num_lines = 0; */
-  FILE* in_file = fopen(in_file_name, "r"); /* should check the result */
-  FILE* out_file = fopen(out_file_name, "w"); /* should check the result */
-  char line[LINE_BUFFER];
+  char* read_result = NULL;
+  int num_lines = 0;
+  int i = 0;
+  int count = 0;
   Treap_T** treap = new_treap();
-  fgets(line, sizeof(line), in_file);
-  /* num_lines = atoi(line); */
-  while (fgets(line, sizeof(line), in_file)) {
-    /*handle lines longer that sizeof(line) */
+  Treap_T* aux = NULL;
+  int* data = NULL;
+  char line[LINE_BUFFER];
+  read_result = fgets(line, sizeof(line), stdin);
+  if (!read_result) {
+    printf("Buffer insufficient!");
+  }
+  num_lines = atoi(line);
+
+  for (i = 0; i < num_lines; i++) {
+    read_result = fgets(line, sizeof(line), stdin);
+    if (!read_result) {
+      printf("Buffer insufficient!");
+    }
     char op = line[0];
     char* string_to_evaluate = &(line[2]);
     string_to_evaluate[strlen(string_to_evaluate)-1] = '\0';
     switch (op) {
       case 'A' :
-        printf("\nOP ADD=%s\n", string_to_evaluate);
+        /*printf("\nOP ADD=%s\n", string_to_evaluate);*/
         if (!*treap) {
-          *treap = new_t(string_to_evaluate, strlen(string_to_evaluate) + 1);
+          /* treap is being inited, continue */
+          count = 1;
+          *treap = new_t(string_to_evaluate, (void *) &count, strlen(string_to_evaluate) + 1, sizeof(int));
+          printf("1\n");
+          continue;
         } else {
-          add_t(treap, string_to_evaluate, strlen(string_to_evaluate) + 1, compare_string);
+          count = 0;
+          aux = search_add_t(treap, string_to_evaluate, (void *) &count,
+            strlen(string_to_evaluate) + 1, sizeof(int), compare_string);
+          data = (int *) aux->data;
+          *data += 1;
+          printf("%d\n", *data);
         }
         break;
       case 'F' :
-        printf("\nOP FIND=%s\n", string_to_evaluate);
-        search_t(treap, string_to_evaluate, compare_string);
+        /*printf("\nOP FIND=%s\n", string_to_evaluate);*/
+        aux = search_t(treap, string_to_evaluate, compare_string);
+        if (!aux) {
+          printf("NULL\n");
+        } else {
+          data = (int *) aux->data;
+          printf("%d\n", *data);
+        }
         break;
       case 'D' :
-        printf("\nOP DEL=%s\n", string_to_evaluate);
+        /*printf("\nOP DEL=%s\n", string_to_evaluate);*/
+        aux = search_t(treap, string_to_evaluate, compare_string);
+        if (!aux) {
+          printf("NULL\n");
+          continue;
+        }
+        data = (int *) aux->data;
+        printf("%d\n", *data);
         remove_t(treap, string_to_evaluate, compare_string);
         break;
     }
-    printf("\n====TREAP BEGIN====\n");
+    /* printf("\n====TREAP BEGIN====\n");
     print_tree(*treap, 0);
-    printf("\n========\n");
+    printf("\n========\n"); */
   }
-
-  fclose(in_file);
-  fclose(out_file);
-
   return 0;
 }
